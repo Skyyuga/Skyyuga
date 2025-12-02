@@ -61,13 +61,19 @@ export const createUser = mutation({
 })
 
 export const checkPhone = query({
-    args : {
-        id : v.id("users")
+    args: {
+        id: v.id("users")
     },
-    handler : async(ctx, args) => {
+    handler: async(ctx, args) => {
         const user = await ctx.db.get(args.id)
-        if (user?.phone?.length != 10) return false
-        return user?.phone == null
+        
+        // Return true if phone is missing or invalid (needs phone)
+        if (!user?.phone || user.phone.length !== 10) {
+            return true
+        }
+        
+        // Return false if phone exists and is valid (doesn't need phone)
+        return false
     }
 })
 

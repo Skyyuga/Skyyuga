@@ -171,10 +171,8 @@ const AdminPage = () => {
         category: newProduct.category,
         gstRate: newProduct.gst as "5" | "18" | "40",
         discount: discountValue,
-        ...(newProduct.category === "Tyres" && {
-          tyreSize: newProduct.size,
-          tyreModel: newProduct.models,
-        }),
+        size: newProduct.size,
+        model: newProduct.models,
       };
       await createProduct(productData);
       toast.success("Product created successfully!");
@@ -229,12 +227,12 @@ const AdminPage = () => {
   const addModelEdit = () => {
     if (
       currentEditModel.trim() &&
-      !selectedProduct.tyreModel?.includes(currentEditModel.trim())
+      !selectedProduct.model?.includes(currentEditModel.trim())
     ) {
       setSelectedProduct({
         ...selectedProduct,
-        tyreModel: [
-          ...(selectedProduct.tyreModel || []),
+        model: [
+          ...(selectedProduct.model || []),
           currentEditModel.trim(),
         ],
       });
@@ -245,7 +243,7 @@ const AdminPage = () => {
   const removeModelEdit = (modelToRemove: string) => {
     setSelectedProduct({
       ...selectedProduct,
-      tyreModel: (selectedProduct.tyreModel || []).filter(
+      model: (selectedProduct.model || []).filter(
         (m: string) => m !== modelToRemove
       ),
     });
@@ -296,10 +294,8 @@ const AdminPage = () => {
         gstRate: selectedProduct.GSTRate,
         discount: discountValue,
         category: selectedProduct.category,
-        ...(selectedProduct.category === "Tyres" && {
-          tyreSize: selectedProduct.tyreSize || "",
-          tyreModel: selectedProduct.tyreModel || [],
-        }),
+        size: selectedProduct.size || "",
+        model: selectedProduct.model || [],
       };
       await updateProduct(updateData);
       toast.success("Product updated successfully!");
@@ -844,20 +840,20 @@ const AdminPage = () => {
                         <p className="text-gray-600 text-xs sm:text-sm line-clamp-2">
                           {product.description}
                         </p>
-                        {product.category === "Tyres" && product.tyreSize && (
+                        {product.category  && product.size && (
                           <div className="pt-2 border-t border-yellow-100">
                             <p className="text-xs text-gray-600">
                               Size:{" "}
                               <span className="font-semibold text-gray-900">
-                                {product.tyreSize}
+                                {product.size}
                               </span>
                             </p>
-                            {product.tyreModel &&
-                              product.tyreModel.length > 0 && (
+                            {product.model &&
+                              product.model.length > 0 && (
                                 <p className="text-xs text-gray-600 mt-1 line-clamp-1">
                                   Models:{" "}
                                   <span className="font-semibold text-gray-900">
-                                    {product.tyreModel.join(", ")}
+                                    {product.model.join(", ")}
                                   </span>
                                 </p>
                               )}
@@ -988,7 +984,7 @@ const AdminPage = () => {
                 </div>
               </div>
 
-              {newProduct.category === "Tyres" && (
+              {newProduct.category && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 bg-yellow-50 p-3 sm:p-4 rounded-lg sm:rounded-xl border-2 border-yellow-200">
                   <div>
                     <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-1.5 sm:mb-2">
@@ -1246,8 +1242,7 @@ const AdminPage = () => {
                   newProduct.imageUrl.length === 0 ||
                   !newProduct.cost ||
                   Number(newProduct.cost) < 1 ||
-                  (newProduct.category === "Tyres" &&
-                    newProduct.models.length === 0)
+                  newProduct.models.length === 0
                 }
                 className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 py-2.5 sm:py-3 rounded-lg sm:rounded-xl hover:from-yellow-500 hover:to-yellow-600 transition-all duration-300 shadow-lg hover:shadow-yellow-500/50 font-bold text-sm sm:text-base transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >
@@ -1336,7 +1331,7 @@ const AdminPage = () => {
                 </div>
               </div>
 
-              {selectedProduct.category === "Tyres" && (
+              {selectedProduct.category  && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 bg-yellow-50 p-3 sm:p-4 rounded-lg sm:rounded-xl border-2 border-yellow-200">
                   <div>
                     <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-1.5 sm:mb-2">
@@ -1344,11 +1339,11 @@ const AdminPage = () => {
                     </label>
                     <input
                       type="text"
-                      value={selectedProduct.tyreSize || ""}
+                      value={selectedProduct.size || ""}
                       onChange={(e) =>
                         setSelectedProduct({
                           ...selectedProduct,
-                          tyreSize: e.target.value,
+                          size: e.target.value,
                         })
                       }
                       className="w-full p-2 sm:p-2.5 border-2 border-yellow-200 rounded-lg sm:rounded-xl focus:ring-4 focus:ring-yellow-500/20 focus:border-yellow-400 transition-all text-sm"
@@ -1361,10 +1356,10 @@ const AdminPage = () => {
                       Compatible Models <span className="text-red-500">*</span>
                     </label>
 
-                    {selectedProduct.tyreModel &&
-                      selectedProduct.tyreModel.length > 0 && (
+                    {selectedProduct.model &&
+                      selectedProduct.model.length > 0 && (
                         <div className="flex flex-wrap gap-1 sm:gap-1.5 mb-1.5 sm:mb-2 p-1.5 sm:p-2 bg-white border-2 border-yellow-200 rounded-lg sm:rounded-xl max-h-16 sm:max-h-20 overflow-y-auto">
-                          {selectedProduct.tyreModel.map(
+                          {selectedProduct.model.map(
                             (model: string, idx: number) => (
                               <span
                                 key={idx}
@@ -1406,8 +1401,8 @@ const AdminPage = () => {
                         Add
                       </button>
                     </div>
-                    {(!selectedProduct.tyreModel ||
-                      selectedProduct.tyreModel.length === 0) && (
+                    {(!selectedProduct.model ||
+                      selectedProduct.model.length === 0) && (
                       <p className="text-xs text-red-500 mt-1">
                         * At least one model required
                       </p>
@@ -1590,9 +1585,8 @@ const AdminPage = () => {
                   selectedProduct.imageUrl.length === 0 ||
                   !selectedProduct.cost ||
                   Number(selectedProduct.cost) < 1 ||
-                  (selectedProduct.category === "Tyres" &&
-                    (!selectedProduct.tyreModel ||
-                      selectedProduct.tyreModel.length === 0))
+                  !selectedProduct.model ||
+                  selectedProduct.model.length === 0
                 }
                 className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 text-gray-900 py-2.5 sm:py-3 rounded-lg sm:rounded-xl hover:from-yellow-500 hover:to-yellow-600 transition-all duration-300 shadow-lg hover:shadow-yellow-500/50 font-bold text-sm sm:text-base transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >

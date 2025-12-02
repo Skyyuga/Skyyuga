@@ -35,10 +35,8 @@ export default function Home() {
   const [orderProcessing, setOrderProcessing] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const [selectedTireSize, setSelectedTireSize] = useState<string | undefined>(
-    ""
-  );
-  const [selectedTireModel, setSelectedTireModel] = useState<string>("");
+  const [selectedSize, setSelectedSize] = useState<string | undefined>("");
+  const [selectedModel, setSelectedModel] = useState<string>("");
   const [modelSearchQuery, setModelSearchQuery] = useState<string>("");
   const [sizeSearchQuery, setSizeSearchQuery] = useState<string>("");
   const [sizeDropdownOpen, setSizeDropdownOpen] = useState(false);
@@ -52,14 +50,14 @@ export default function Home() {
   const { cartItems, addToCart, updateQuantity, clearCart, total } = useCart();
 
   const productData = useQuery(api.product.getAllProducts);
-  const products = productData?.products || []
+  const products = productData?.products || [];
 
-  const tireData = useQuery(api.product.getAllTyres, {
-    size: selectedTireSize || undefined,
-    model: selectedTireModel || undefined,
+  const Data = useQuery(api.product.getAllProductsSizeModel, {
+    size: selectedSize || undefined,
+    model: selectedModel || undefined,
   });
 
-  const allTireData = useQuery(api.product.getAllTyres, {});
+  const allData = useQuery(api.product.getAllProductsSizeModel, {});
 
   const userData = useQuery(api.user.getUserByEmail, {
     email: user?.primaryEmailAddress?.emailAddress || "",
@@ -212,11 +210,37 @@ export default function Home() {
     ...Array.from(new Set(products.map((p) => p.category))),
   ];
 
-  const showTireFilters =
-    selectedCategory === "All" || selectedCategory === "Tyres";
-  const anyTireFilterActive = selectedTireSize || selectedTireModel;
+  const showFilters = true;
 
-  const filterOptions = allTireData || { uniqueSizes: [], uniqueModels: [] };
+  const anyFilterActive = selectedSize || selectedModel;
+
+  // Filter sizes and models based on selected category
+  const categoryFilteredProducts =
+    selectedCategory === "All"
+      ? products
+      : products.filter((p) => p.category === selectedCategory);
+
+  // Extract unique sizes
+  const uniqueSizes = Array.from(
+    new Set(
+      categoryFilteredProducts
+        .map((p) => p.size)
+        .filter((size) => size !== undefined && size !== null && size !== "")
+    )
+  );
+
+  // Extract unique models (flatten the array since model is an array in database)
+  const uniqueModels = Array.from(
+    new Set(
+      categoryFilteredProducts
+        .flatMap((p) => p.model || [])
+        .filter(
+          (model) => model !== undefined && model !== null && model !== ""
+        )
+    )
+  );
+
+  const filterOptions = { uniqueSizes, uniqueModels };
 
   const filteredModels = filterOptions.uniqueModels.filter((model) =>
     model.toLowerCase().includes(modelSearchQuery.toLowerCase())
@@ -231,14 +255,11 @@ export default function Home() {
     if (/^\d{0,6}$/.test(value)) setPincode(value);
   };
 
-  const isLoadingFilteredTires =
-    showTireFilters && anyTireFilterActive && !tireData;
+  const isLoadingFilteredTires = showFilters && anyFilterActive && !Data;
 
   let filteredProducts;
-  if (showTireFilters && anyTireFilterActive && tireData) {
-    filteredProducts = tireData.tyres;
-  } else if (selectedCategory === "Tyres") {
-    filteredProducts = products.filter((p) => p.category === "Tyres");
+  if (showFilters && anyFilterActive && Data) {
+    filteredProducts = Data.products;
   } else if (selectedCategory === "All") {
     filteredProducts = products;
   } else {
@@ -490,7 +511,8 @@ export default function Home() {
               <span className="text-gray-900">All In One Place</span>
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto px-4">
-              Tyres, Tubes, Lubricating & Industrial Oils And Greases, Fuel Oil And Air Filters, Car Accessories, Car Spanner & More...
+              Tyres, Tubes, Lubricating & Industrial Oils And Greases, Fuel Oil
+              And Air Filters, Car Accessories, Car Spanner & More...
             </p>
           </div>
         </section>
@@ -660,8 +682,8 @@ export default function Home() {
                       key={category}
                       onClick={() => {
                         setSelectedCategory(category);
-                        setSelectedTireSize("");
-                        setSelectedTireModel("");
+                        setSelectedSize("");
+                        setSelectedModel("");
                       }}
                       className={`px-4 py-2 rounded-full font-semibold transition-all duration-300 whitespace-nowrap ${
                         selectedCategory === category
@@ -681,8 +703,8 @@ export default function Home() {
                       key={category}
                       onClick={() => {
                         setSelectedCategory(category);
-                        setSelectedTireSize("");
-                        setSelectedTireModel("");
+                        setSelectedSize("");
+                        setSelectedModel("");
                       }}
                       className={`px-4 py-2 rounded-full font-semibold transition-all duration-300 whitespace-nowrap ${
                         selectedCategory === category
@@ -703,8 +725,8 @@ export default function Home() {
                     key={category}
                     onClick={() => {
                       setSelectedCategory(category);
-                      setSelectedTireSize("");
-                      setSelectedTireModel("");
+                      setSelectedSize("");
+                      setSelectedModel("");
                     }}
                     className={`px-4 py-2 rounded-full font-semibold transition-all duration-300 whitespace-nowrap ${
                       selectedCategory === category
@@ -719,7 +741,7 @@ export default function Home() {
             </div>
           </div>
 
-          {showTireFilters && (
+          {showFilters && (
             <div className="mb-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
               <div className="w-[70%] sm:w-64 relative">
                 <button
@@ -729,7 +751,7 @@ export default function Home() {
                   }}
                   className="w-full px-6 py-3 bg-gradient-to-r from-yellow-50 to-yellow-100 border-2 border-yellow-300 rounded-full font-semibold text-gray-900 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400 transition-all cursor-pointer hover:border-yellow-400 shadow-md flex items-center justify-between"
                 >
-                  <span>{selectedTireSize || "All Sizes"}</span>
+                  <span>{selectedSize || "All Sizes"}</span>
                   <svg
                     className={`w-5 h-5 transition-transform ${sizeDropdownOpen ? "rotate-180" : ""}`}
                     fill="none"
@@ -763,7 +785,7 @@ export default function Home() {
                     <div className="overflow-y-auto">
                       <div
                         onClick={() => {
-                          setSelectedTireSize("");
+                          setSelectedSize("");
                           setSizeSearchQuery("");
                           setSizeDropdownOpen(false);
                         }}
@@ -777,12 +799,12 @@ export default function Home() {
                           <div
                             key={size}
                             onClick={() => {
-                              setSelectedTireSize(size);
+                              setSelectedSize(size);
                               setSizeSearchQuery("");
                               setSizeDropdownOpen(false);
                             }}
                             className={`px-6 py-3 hover:bg-yellow-50 cursor-pointer font-semibold transition-colors border-b border-yellow-100 last:border-b-0 ${
-                              selectedTireSize === size
+                              selectedSize === size
                                 ? "bg-yellow-100 text-yellow-700"
                                 : "text-gray-900"
                             }`}
@@ -808,7 +830,7 @@ export default function Home() {
                   }}
                   className="w-full px-6 py-3 bg-gradient-to-r from-yellow-50 to-yellow-100 border-2 border-yellow-300 rounded-full font-semibold text-gray-900 focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400 transition-all cursor-pointer hover:border-yellow-400 shadow-md flex items-center justify-between"
                 >
-                  <span>{selectedTireModel || "All Models"}</span>
+                  <span>{selectedModel || "All Models"}</span>
                   <svg
                     className={`w-5 h-5 transition-transform ${modelDropdownOpen ? "rotate-180" : ""}`}
                     fill="none"
@@ -839,7 +861,7 @@ export default function Home() {
                     <div className="overflow-y-auto">
                       <div
                         onClick={() => {
-                          setSelectedTireModel("");
+                          setSelectedModel("");
                           setModelSearchQuery("");
                           setModelDropdownOpen(false);
                         }}
@@ -852,12 +874,12 @@ export default function Home() {
                           <div
                             key={model}
                             onClick={() => {
-                              setSelectedTireModel(model);
+                              setSelectedModel(model);
                               setModelSearchQuery("");
                               setModelDropdownOpen(false);
                             }}
                             className={`px-6 py-3 hover:bg-yellow-50 cursor-pointer font-semibold transition-colors border-b border-yellow-100 last:border-b-0 ${
-                              selectedTireModel === model
+                              selectedModel === model
                                 ? "bg-yellow-100 text-yellow-700"
                                 : "text-gray-900"
                             }`}
@@ -875,11 +897,11 @@ export default function Home() {
                 )}
               </div>
 
-              {anyTireFilterActive && (
+              {anyFilterActive && (
                 <button
                   onClick={() => {
-                    setSelectedTireSize("");
-                    setSelectedTireModel("");
+                    setSelectedSize("");
+                    setSelectedModel("");
                     setModelSearchQuery("");
                     setSizeDropdownOpen(false);
                     setModelDropdownOpen(false);
@@ -940,9 +962,9 @@ export default function Home() {
                           <span className="bg-yellow-400 text-gray-900 text-xs font-bold px-3 py-1 rounded-full">
                             {product.category}
                           </span>
-                          {product.category === "Tyres" && product.tyreSize && (
+                          {product.category === "Tyres" && product.size && (
                             <span className="bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
-                              {product.tyreSize}
+                              {product.size}
                             </span>
                           )}
                         </div>

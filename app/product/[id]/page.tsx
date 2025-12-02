@@ -100,9 +100,9 @@ const ProductPage = () => {
                                     </div>
                                 )}
 
-                                {product.tyreSize && (
+                                {product.size && (
                                     <div className='absolute top-4 right-4 p-2 font-semibold bg-yellow-400 rounded-2xl scale-75 md:scale-100'>
-                                        {product.tyreSize}
+                                        {product.size}
                                     </div>
                                 )}
                                 
@@ -193,7 +193,7 @@ const ProductPage = () => {
                             {product.description}
                         </p>
 
-                        {product.tyreModel && product.tyreModel.length > 0 && (
+                        {product.model && product.model.length > 0 && (
                             <div className="relative overflow-hidden bg-gradient-to-br from-yellow-50 via-amber-50 to-yellow-100 rounded-2xl p-6 border-2 border-yellow-300 shadow-lg hover:shadow-xl transition-all duration-300">
                                 <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/10 via-amber-400/10 to-yellow-400/10 animate-pulse"></div>
                                 
@@ -209,7 +209,7 @@ const ProductPage = () => {
                                         </h3>
                                     </div>
                                     <div className="flex flex-wrap gap-2.5">
-                                        {product.tyreModel.map((model, index) => (
+                                        {product.model.map((model, index) => (
                                             <span 
                                                 key={index}
                                                 className="group relative px-5 py-2.5 bg-white rounded-xl text-sm font-bold text-gray-800 border-2 border-yellow-300 shadow-md hover:shadow-xl hover:scale-105 hover:-translate-y-0.5 transition-all duration-300 cursor-default"

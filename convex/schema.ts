@@ -36,8 +36,8 @@ export default defineSchema({
         category : v.string(),
         discount : v.number(),
         GSTRate : GSTValidator,
-        tyreSize : v.optional(v.string()),
-        tyreModel : v.optional(v.array(v.string()))
+        size : v.string(),
+        model : v.array(v.string())
     }),
 
     orders : defineTable({

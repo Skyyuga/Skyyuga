@@ -36,8 +36,8 @@ export const createProducts = mutation({
         imageUrl : v.array(v.string()),
         cost : v.number(),
         category : v.string(),
-        tyreSize : v.optional(v.string()),
-        tyreModel : v.optional(v.array(v.string())),
+        size : v.string(),
+        model : v.array(v.string()),
         gstRate : GSTValidator,
         discount : v.number()
     },
@@ -48,8 +48,8 @@ export const createProducts = mutation({
             imageUrl : args.imageUrl,
             cost : args.cost,
             category : args.category,
-            tyreModel : args.tyreModel,
-            tyreSize : args.tyreSize,
+            model : args.model,
+            size : args.size,
             GSTRate : args.gstRate,
             discount : args.discount
         })
@@ -66,8 +66,8 @@ export const updateProduct = mutation({
     imageUrl: v.optional(v.array(v.string())),
     cost: v.optional(v.number()),
     category: v.optional(v.string()),
-    tyreModel: v.optional(v.array(v.string())),
-    tyreSize: v.optional(v.string()),
+    model: v.optional(v.array(v.string())),
+    size: v.optional(v.string()),
     gstRate : v.optional(GSTValidator),
     discount : v.optional(v.number())
   },
@@ -81,8 +81,8 @@ export const updateProduct = mutation({
       imageUrl: args.imageUrl ?? product.imageUrl,
       cost: args.cost ?? product.cost,
       category: args.category ?? product.category,
-      tyreModel: args.tyreModel ?? product.tyreModel,
-      tyreSize: args.tyreSize ?? product.tyreSize,
+      model: args.model ?? product.model,
+      size: args.size ?? product.size,
       GSTRate: args.gstRate ?? product.GSTRate,
       discount: args.discount ?? product.discount
     });
@@ -98,29 +98,28 @@ export const deleteProduct = mutation({
     }
 })
 
-export const getAllTyres = query({
+export const getAllProductsSizeModel = query({
     args : {
         model : v.optional(v.string()),
         size : v.optional(v.string())
     },
     handler : async(ctx, args) => {
-        let allTyres = await ctx.db
+        let allProducts = await ctx.db
             .query("products")
-            .filter((q) => q.eq(q.field("category"), "Tyres"))
             .collect()
     
         if(args.model != null && args.model != undefined){
-            allTyres = allTyres.filter((t) => t.tyreModel?.includes(args.model!))
+            allProducts = allProducts.filter((t) => t.model?.includes(args.model!))
         }
 
         if(args.size != null && args.size != undefined){
-            allTyres = allTyres.filter((t) => t.tyreSize === args.size)
+            allProducts = allProducts.filter((t) => t.size === args.size)
         }
 
-        const uniqueSizes = [...new Set(allTyres.map((t) => t.tyreSize).filter(Boolean))];
+        const uniqueSizes = [...new Set(allProducts.map((t) => t.size).filter(Boolean))];
 
-        const uniqueModels = [...new Set(allTyres.flatMap((t) => t.tyreModel ?? []))];
+        const uniqueModels = [...new Set(allProducts.flatMap((t) => t.model ?? []))];
 
-        return { tyres : allTyres, uniqueSizes, uniqueModels}
+        return { products : allProducts, uniqueSizes, uniqueModels}
     }
 })

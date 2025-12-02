@@ -5,7 +5,7 @@ import { api } from "@/convex/_generated/api";
 export async function POST(req : NextRequest){
     try {
         const body = await req.json();
-        const { title, description, imageUrl, cost, category, discount, gstRate } = body;
+        const { title, description, imageUrl, cost, category, discount, gstRate, model, size } = body;
 
         await fetchMutation(api.product.createProducts, {
             title, 
@@ -14,7 +14,9 @@ export async function POST(req : NextRequest){
             cost,
             category,
             discount,
-            gstRate
+            gstRate,
+            model,
+            size
         })
 
         return NextResponse.json(

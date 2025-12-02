@@ -66,6 +66,7 @@ export const checkPhone = query({
     },
     handler : async(ctx, args) => {
         const user = await ctx.db.get(args.id)
+        if (user?.phone?.length != 10) return false
         return user?.phone == null
     }
 })

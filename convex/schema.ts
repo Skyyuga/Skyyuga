@@ -25,7 +25,8 @@ export default defineSchema({
     users : defineTable({
         name : v.string(),
         email : v.string(),
-        phone : v.optional(v.string())
+        phone : v.optional(v.string()),
+        vehicleNumber : v.optional(v.string())
     }),
 
     products : defineTable({

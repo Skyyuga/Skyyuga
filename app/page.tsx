@@ -12,12 +12,14 @@ import {
   X,
   Phone,
   User,
+  Car,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/cartContext";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { checkIsAdmin } from "@/lib/checkAdmin";
 import Image from "next/image";
+import { updateVehicleNumber } from "@/convex/user";
 
 export default function Home() {
   const [cartOpen, setCartOpen] = useState(false);
@@ -32,6 +34,7 @@ export default function Home() {
   const [phoneModalOpen, setPhoneModalOpen] = useState(false);
   const [address, setAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [vehicleNumber, setVehicleNumber] = useState("")
   const [orderProcessing, setOrderProcessing] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -69,6 +72,7 @@ export default function Home() {
   );
 
   const updatePhone = useMutation(api.user.updatePhoneNumber);
+  const updateVehicleNumber = useMutation(api.user.updateVehicleNumber)
 
   const email = user?.primaryEmailAddress?.emailAddress;
   const username = user?.firstName + " " + user?.lastName;
@@ -191,14 +195,29 @@ export default function Home() {
       return;
     }
 
+    if (!vehicleNumber.trim()) {
+      toast.error("Please enter a valid vehicle number");
+      return;
+    }
+
+    if (vehicleNumber.length < 8) {
+      toast.error("Vehicle number must be at least 8 in length");
+      return;
+    }
+
     try {
       await updatePhone({
         id: userData!._id,
         phone: phoneNumber,
       });
       toast.success("Phone number saved successfully!");
+      await updateVehicleNumber({
+        id: userData!._id,
+        vehicleNumber: vehicleNumber
+      })
       setPhoneModalOpen(false);
       setPhoneNumber("");
+      setVehicleNumber("")
     } catch (error) {
       toast.error("Failed to save phone number. Please try again.");
       console.error("Error saving phone number:", error);
@@ -290,7 +309,7 @@ export default function Home() {
 
             <div className="p-6">
               <p className="text-gray-600 mb-6 text-center">
-                Please add your phone number to continue shopping and receive
+                Please add your phone number & Vehicle Number to continue shopping and receive
                 order updates.
               </p>
 
@@ -316,11 +335,33 @@ export default function Home() {
                 </p>
               </div>
 
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Vehicle Number <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={vehicleNumber}
+                    onChange={(e) =>
+                      setVehicleNumber(e.target.value)
+                    }
+                    placeholder="Enter your Vehicle Number"
+                    maxLength={10}
+                    className="w-full p-3 pl-10 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all"
+                  />
+                  <Car className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Used for the warrenty of tires
+                </p>
+              </div>
+
               <button
                 onClick={handleSavePhoneNumber}
-                disabled={!phoneNumber.trim() || phoneNumber.length < 10}
+                disabled={!phoneNumber.trim() || phoneNumber.length < 10 || !vehicleNumber.trim() || vehicleNumber.length < 8}
                 className={`w-full py-3 px-4 rounded-lg text-white font-bold text-lg transition-all transform ${
-                  phoneNumber.trim() && phoneNumber.length >= 10
+                  phoneNumber.trim() && phoneNumber.length >= 10 && vehicleNumber.trim() && vehicleNumber.length >= 8
                     ? "bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 hover:scale-105 shadow-lg"
                     : "bg-gray-300 cursor-not-allowed"
                 }`}

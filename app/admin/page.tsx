@@ -17,6 +17,7 @@ import {
   Check,
   Trash2,
   MoveLeft,
+  Car,
 } from "lucide-react";
 import { Id } from "@/convex/_generated/dataModel";
 import { toast } from "sonner";
@@ -538,6 +539,7 @@ const AdminPage = () => {
                     u.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     u.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     u.phone?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    u.vehicleNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     u._id?.toLowerCase().includes(searchTerm.toLowerCase())
                 )
                 .map((u) => (
@@ -569,6 +571,12 @@ const AdminPage = () => {
                         <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
                         <span className="text-xs sm:text-sm">
                           {u.phone || "—"}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-gray-600">
+                        <Car className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+                        <span className="text-xs sm:text-sm">
+                          {u.vehicleNumber || "—"}
                         </span>
                       </div>
                       <div className="flex items-center space-x-2 text-gray-600">

@@ -67,12 +67,14 @@ export const checkPhone = query({
     handler: async(ctx, args) => {
         const user = await ctx.db.get(args.id)
         
-        // Return true if phone is missing or invalid (needs phone)
         if (!user?.phone || user.phone.length !== 10) {
             return true
         }
         
-        // Return false if phone exists and is valid (doesn't need phone)
+        if(!user?.vehicleNumber || user.vehicleNumber.length < 8){
+            return true
+        }
+
         return false
     }
 })
@@ -85,6 +87,18 @@ export const updatePhoneNumber = mutation({
     handler : async(ctx, args) => {
         await ctx.db.patch(args.id, {
             phone : args.phone
+        })
+    }
+})
+
+export const updateVehicleNumber = mutation({
+    args : {
+        id : v.id("users"),
+        vehicleNumber : v.string()
+    },
+    handler : async(ctx, args) => {
+        await ctx.db.patch(args.id, {
+            vehicleNumber : args.vehicleNumber
         })
     }
 })

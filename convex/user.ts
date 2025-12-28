@@ -71,9 +71,6 @@ export const checkPhone = query({
             return true
         }
         
-        if(!user?.vehicleNumber || user.vehicleNumber.length < 8){
-            return true
-        }
 
         return false
     }
@@ -91,17 +88,6 @@ export const updatePhoneNumber = mutation({
     }
 })
 
-export const updateVehicleNumber = mutation({
-    args : {
-        id : v.id("users"),
-        vehicleNumber : v.string()
-    },
-    handler : async(ctx, args) => {
-        await ctx.db.patch(args.id, {
-            vehicleNumber : args.vehicleNumber
-        })
-    }
-})
 
 export const getAllUsers = query({
   args: {

@@ -574,7 +574,7 @@ const AdminPage = () => {
                         </span>
                       </div>
                       <div className="flex items-center space-x-2 text-gray-600">
-                        <Car className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
+                        <Car className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-20" />
                         <span className="text-xs sm:text-sm">
                           {u.vehicleNumber || "—"}
                         </span>
@@ -679,6 +679,14 @@ const AdminPage = () => {
                           </p>
                           <p className="font-semibold text-gray-900 text-xs sm:text-sm">
                             {order.paymentMethod || "—"}
+                          </p>
+                        </div>
+                        <div className="bg-yellow-50 rounded-lg sm:rounded-xl p-3 sm:p-4">
+                          <p className="text-xs text-gray-600 mb-1">
+                             Vehicle Number
+                          </p>
+                          <p className="font-semibold text-gray-900 text-xs sm:text-sm">
+                            {order.vehicleNumber || "—"}
                           </p>
                         </div>
                         <div className="bg-yellow-50 rounded-lg sm:rounded-xl p-3 sm:p-4">

@@ -19,7 +19,6 @@ import { useCart } from "@/context/cartContext";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { checkIsAdmin } from "@/lib/checkAdmin";
 import Image from "next/image";
-import { updateVehicleNumber } from "@/convex/user";
 
 export default function Home() {
   const [cartOpen, setCartOpen] = useState(false);
@@ -33,8 +32,8 @@ export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [phoneModalOpen, setPhoneModalOpen] = useState(false);
   const [address, setAddress] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [vehicleNumber, setVehicleNumber] = useState("")
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [orderProcessing, setOrderProcessing] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -72,7 +71,6 @@ export default function Home() {
   );
 
   const updatePhone = useMutation(api.user.updatePhoneNumber);
-  const updateVehicleNumber = useMutation(api.user.updateVehicleNumber)
 
   const email = user?.primaryEmailAddress?.emailAddress;
   const username = user?.firstName + " " + user?.lastName;
@@ -211,10 +209,6 @@ export default function Home() {
         phone: phoneNumber,
       });
       toast.success("Phone number saved successfully!");
-      await updateVehicleNumber({
-        id: userData!._id,
-        vehicleNumber: vehicleNumber
-      })
       setPhoneModalOpen(false);
       setPhoneNumber("");
       setVehicleNumber("")
@@ -1315,6 +1309,16 @@ export default function Home() {
                     )}
                   </div>
                 </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Vehicle Number</p>
+                  <input
+                    type="text"
+                    value={vehicleNumber}
+                    onChange={(e) => setVehicleNumber(e.target.value)}
+                    placeholder="Enter your Vehicle Number"
+                    className="w-full font-semibold p-2.5 mt-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all"
+                  />
+                </div>
               </div>
 
               <div className="flex border-b border-gray-200 mb-6">
@@ -1453,11 +1457,12 @@ export default function Home() {
                       address: address,
                       name: username,
                       email: email,
+                      vehicleNumber : vehicleNumber,
                       state: state,
                       pincode: pincode,
                       contactNumber: phone,
                     };
-
+                    console.log(orderData)
                     const response = await fetch("/api/createOrder", {
                       method: "POST",
                       headers: {

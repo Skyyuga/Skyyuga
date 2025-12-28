@@ -2,7 +2,7 @@
 
 import { api } from '@/convex/_generated/api';
 import { useUser } from '@clerk/nextjs';
-import { useQuery } from 'convex/react';
+import { useMutation, useQuery } from 'convex/react';
 import React, { useState } from 'react';
 import { ArrowLeft, Package, Calendar, CreditCard, Phone, Mail, MapPin } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -13,6 +13,8 @@ const OrderPage = () => {
     const { user } = useUser();
     const email = user?.primaryEmailAddress?.emailAddress;
     const AllUserOrders = useQuery(api.order.getOrdersByEmail, { email: email! });
+    const DeleteAllOrders = useMutation(api.order.deleteAllOrders)
+    console.log(AllUserOrders)
     const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
 
     if (!AllUserOrders) {
@@ -50,6 +52,7 @@ const OrderPage = () => {
                         <ArrowLeft className="w-5 h-5" />
                         Back to Shop
                     </button>
+
                     
                     <div className="flex items-center gap-4 mb-2">
                         <Package className="w-10 h-10 text-yellow-600" />
@@ -166,6 +169,9 @@ const OrderPage = () => {
                                                                         </p>
                                                                         <p className="text-sm text-gray-600 flex items-start gap-2">
                                                                             <span><span className="font-semibold">PinCode:</span> {order.pincode}</span>
+                                                                        </p>
+                                                                        <p className="text-sm text-gray-600 flex items-start gap-2">
+                                                                            <span><span className="font-semibold">Vehicle Number:</span> {order.vehicleNumber}</span>
                                                                         </p>
                                                                     </div>
                                                                     <div className="space-y-2">

@@ -18,6 +18,7 @@ export const createOrder = mutation({
         address : v.string(),
         userId : v.id("users"),
         contactNumber : v.string(),
+        vehicleNumber : v.optional(v.string()),
         state: v.string(),
         pincode: v.string()
     },
@@ -31,6 +32,7 @@ export const createOrder = mutation({
             address : args.address,
             userId : args.userId,
             status : "PENDING",
+            vehicleNumber : args.vehicleNumber,
             email : args.email,
             contactNumber : args.contactNumber,
             pincode : args.pincode,
@@ -54,6 +56,19 @@ export const getOrdersByEmail = query({
     }
 })
 
+export const deleteAllOrders = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const orders = await ctx.db.query("orders").collect();
+
+    for (const order of orders) {
+      await ctx.db.delete(order._id);
+    }
+
+    return { deletedCount: orders.length };
+  },
+});
+
 export const getAllOrders = query({
   args: {
     email: v.string()
@@ -73,6 +88,8 @@ export const getAllOrders = query({
     return orders;
   }
 });
+
+
 
 export const updateOrderStatus = mutation({
     args: {

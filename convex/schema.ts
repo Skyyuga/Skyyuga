@@ -26,7 +26,7 @@ export default defineSchema({
         name : v.string(),
         email : v.string(),
         phone : v.optional(v.string()),
-        vehicleNumber : v.optional(v.string())
+        vehicleNumber : v.optional(v.string()),
     }),
 
     products : defineTable({
@@ -54,6 +54,7 @@ export default defineSchema({
         referenceNumber : v.number(),
         name : v.string(),
         address  :v.string(),
+        vehicleNumber : v.optional(v.string()),
         state : v.string(),
         pincode: v.string(),
         email : v.string(),
